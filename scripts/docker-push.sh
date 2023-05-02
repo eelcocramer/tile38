@@ -16,6 +16,10 @@ export DOCKER_REPO=$DOCKER_USER/tile38
 docker build -f Dockerfile -t $DOCKER_REPO:$GIT_COMMIT_SHORT .
 docker buildx ls
 
+ls -alh
+
+docker run --privileged --rm tonistiigi/binfmt --install all
+
 if [ "$GIT_BRANCH" != "master" ]; then
 	echo "Not pushing, not on master"
 elif [ "$DOCKER_USER" == "" ]; then
