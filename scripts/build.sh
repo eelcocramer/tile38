@@ -1,7 +1,5 @@
 #!/bin/bash
 
-echo "test"
-
 set -e
 cd $(dirname "${BASH_SOURCE[0]}")/..
 
