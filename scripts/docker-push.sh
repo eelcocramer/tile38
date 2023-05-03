@@ -18,11 +18,7 @@ ls -alh packages/
 # build the docker image
 docker run --privileged --rm tonistiigi/binfmt --install all
 docker buildx ls
-docker buildx build \
-	-f Dockerfile \
-	--platform linux/arm64,linux/amd64 \
-	--build-arg VERSION=$GIT_VERSION \
-	--tag $DOCKER_REPO:$GIT_COMMIT_SHORT
+docker buildx build -f Dockerfile --platform linux/arm64,linux/amd64 --build-arg VERSION=$GIT_VERSION --tag $DOCKER_REPO:$GIT_COMMIT_SHORT .
 
 docker images
 docker inspect $DOCKER_REPO:$GIT_COMMIT_SHORT
