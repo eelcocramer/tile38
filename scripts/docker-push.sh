@@ -17,6 +17,7 @@ docker build -f Dockerfile -t $DOCKER_REPO:$GIT_COMMIT_SHORT .
 docker buildx ls
 
 ls -alh
+ls -alh packages/
 
 docker run --privileged --rm tonistiigi/binfmt --install all
 
