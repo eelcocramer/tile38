@@ -12,14 +12,13 @@ export GIT_COMMIT_SHORT=$(git rev-parse --short HEAD)
 # DOCKER_REPO - the base repository name to push the docker build to.
 export DOCKER_REPO=$DOCKER_USER/tile38
 
-# build the docker image
-docker build -f Dockerfile -t $DOCKER_REPO:$GIT_COMMIT_SHORT .
-docker buildx ls
-
 ls -alh
 ls -alh packages/
 
+# build the docker image
+#docker build -f Dockerfile -t $DOCKER_REPO:$GIT_COMMIT_SHORT .
 docker run --privileged --rm tonistiigi/binfmt --install all
+docker buildx ls
 
 if [ "$GIT_BRANCH" != "master" ]; then
 	echo "Not pushing, not on master"
