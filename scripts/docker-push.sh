@@ -12,14 +12,6 @@ export GIT_COMMIT_SHORT=$(git rev-parse --short HEAD)
 # DOCKER_REPO - the base repository name to push the docker build to.
 export DOCKER_REPO=$DOCKER_USER/tile38
 
-# https://github.com/tonistiigi/binfmt
-docker run --privileged --rm tonistiigi/binfmt --install all
-docker buildx create --name multiarch --platform linux/amd64,linux/amd64/v2,linux/amd64/v3,linux/arm64,linux/386,linux/arm/v7 --use default
-docker buildx ls
-
-# build the docker image
-docker buildx build -f Dockerfile --platform linux/arm64,linux/amd64 --build-arg VERSION=$GIT_VERSION --tag $DOCKER_REPO:$GIT_COMMIT_SHORT .
-
 docker images
 docker inspect $DOCKER_REPO:$GIT_COMMIT_SHORT
 
@@ -35,17 +27,32 @@ elif [ "$DOCKER_PASSWORD" == "" ]; then
 	echo "Not pushing, DOCKER_PASSWORD not set"
 	exit 1
 else 
-	push(){
-		docker tag $DOCKER_REPO:$GIT_COMMIT_SHORT $DOCKER_REPO:$1
-		#docker push $DOCKER_REPO:$1
-		echo "Pushed $DOCKER_REPO:$1"
-	}
+	# setup cross platform builder
+	# https://github.com/tonistiigi/binfmt
+	docker run --privileged --rm tonistiigi/binfmt --install all
+	docker buildx create --name multiarch --platform linux/amd64,linux/amd64/v2,linux/amd64/v3,linux/arm64,linux/386,linux/arm/v7 --use default
+
 	# docker login
 	echo $DOCKER_PASSWORD | docker login -u $DOCKER_LOGIN --password-stdin
 	if [ "$(curl -s https://hub.docker.com/v2/repositories/$DOCKER_REPO/tags/$GIT_VERSION/ | grep "digest")" == "" ]; then
-		# push the newest tag
-		push "$GIT_VERSION"
-		push "latest"
+		# build the docker image
+		docker buildx build \
+			-f Dockerfile \
+			--platform linux/arm64,linux/amd64 \
+			--build-arg VERSION=$GIT_VERSION \
+			--tag $DOCKER_REPO:$GIT_VERSION \
+			--tag $DOCKER_REPO:latest \
+			--tag $DOCKER_REPO:edge \
+			--push \
+			.
+	else
+		# build the docker image
+		docker buildx build \
+			-f Dockerfile \
+			--platform linux/arm64,linux/amd64 \
+			--build-arg VERSION=$GIT_VERSION \
+			--tag $DOCKER_REPO:edge \
+			--push \
+			.
 	fi
-	push "edge"
 fi
