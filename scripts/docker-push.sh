@@ -18,7 +18,7 @@ docker buildx create --name multiarch --platform linux/amd64,linux/amd64/v2,linu
 docker buildx ls
 
 # build the docker image
-docker buildx build -f Dockerfile --platform linux/arm64,linux/amd64 --build-arg VERSION=$GIT_VERSION --tag $DOCKER_REPO:$GIT_COMMIT_SHORT --load .
+docker buildx build -f Dockerfile --platform linux/arm64,linux/amd64 --build-arg VERSION=$GIT_VERSION --tag $DOCKER_REPO:$GIT_COMMIT_SHORT .
 
 docker images
 docker inspect $DOCKER_REPO:$GIT_COMMIT_SHORT
