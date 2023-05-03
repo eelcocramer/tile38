@@ -42,5 +42,3 @@ else
 	zip -r -q $bdir.zip $bdir
 fi
 
-# Remove build directory.
-rm -rf $bdir

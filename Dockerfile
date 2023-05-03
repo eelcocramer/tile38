@@ -1,9 +1,14 @@
 FROM alpine:3.16.2
+
+ARG VERSION
+ARG TARGETOS
+ARG TARGETARCH
+
 RUN apk add --no-cache ca-certificates
 
-ADD tile38-server /usr/local/bin
-ADD tile38-cli /usr/local/bin
-ADD tile38-benchmark /usr/local/bin
+ADD packages/tile38-$VERSION-$TARGETOS-$TARGETARCH/tile38-server /usr/local/bin
+ADD packages/tile38-$VERSION-$TARGETOS-$TARGETARCH/tile38-cli /usr/local/bin
+ADD packages/tile38-$VERSION-$TARGETOS-$TARGETARCH/tile38-benchmark /usr/local/bin
 
 RUN addgroup -S tile38 && \
     adduser -S -G tile38 tile38 && \

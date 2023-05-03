@@ -16,9 +16,16 @@ ls -alh
 ls -alh packages/
 
 # build the docker image
-#docker build -f Dockerfile -t $DOCKER_REPO:$GIT_COMMIT_SHORT .
 docker run --privileged --rm tonistiigi/binfmt --install all
 docker buildx ls
+docker buildx build \
+	-f Dockerfile \
+	--platform linux/arm64,linux/amd64 \
+	--build-arg VERSION=$GIT_VERSION \
+	--tag $DOCKER_REPO:$GIT_COMMIT_SHORT
+
+docker images
+docker inspect $DOCKER_REPO:$GIT_COMMIT_SHORT
 
 if [ "$GIT_BRANCH" != "master" ]; then
 	echo "Not pushing, not on master"
