@@ -12,13 +12,13 @@ export GIT_COMMIT_SHORT=$(git rev-parse --short HEAD)
 # DOCKER_REPO - the base repository name to push the docker build to.
 export DOCKER_REPO=$DOCKER_USER/tile38
 
-ls -alh
-ls -alh packages/
+# https://github.com/tonistiigi/binfmt
+docker run --privileged --rm tonistiigi/binfmt --install all
+docker buildx create --name multiarch --platform linux/amd64,linux/amd64/v2,linux/amd64/v3,linux/arm64,linux/386,linux/arm/v7 --use default
+docker buildx ls
 
 # build the docker image
-docker run --privileged --rm tonistiigi/binfmt --install all
-docker buildx ls
-docker buildx build -f Dockerfile --platform linux/arm64,linux/amd64 --build-arg VERSION=$GIT_VERSION --tag $DOCKER_REPO:$GIT_COMMIT_SHORT .
+docker buildx build -f Dockerfile --platform linux/arm64,linux/amd64 --build-arg VERSION=$GIT_VERSION --tag $DOCKER_REPO:$GIT_COMMIT_SHORT --load .
 
 docker images
 docker inspect $DOCKER_REPO:$GIT_COMMIT_SHORT

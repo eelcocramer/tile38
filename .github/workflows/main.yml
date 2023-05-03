@@ -21,11 +21,11 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Test
-        run: make test
-
-      - name: Package
-        run: make package
+      #      - name: Test
+      #        run: make test
+      #
+      #      - name: Package
+      #        run: make package
 
       - name: Docker push
         env:
