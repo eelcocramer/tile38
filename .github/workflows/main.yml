@@ -11,6 +11,13 @@ jobs:
     name: Build
     runs-on: ubuntu-latest
     steps:
+      - name: Use variables
+        run: |
+          echo "docker user variable : $DOCKER_USER"
+          echo "docker login variable : $DOCKER_LOGIN"
+        env:
+          DOCKER_LOGIN: ${{ vars.DOCKER_USER}}
+          DOCKER_USER: ${{ vars.DOCKER_USER}}
       - name: Set up Go 1.x
         uses: actions/setup-go@v2
         with:
@@ -29,7 +36,7 @@ jobs:
 
       - name: Docker push
         env:
-          DOCKER_LOGIN: ${{ env.DOCKER_LOGIN }}
-          DOCKER_USER: ${{ env.sDOCKER_USER }}
+          DOCKER_LOGIN: ${{ vars.DOCKER_LOGIN }}
+          DOCKER_USER: ${{ vars.DOCKER_USER }}
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
         run: ./scripts/docker-push.sh
